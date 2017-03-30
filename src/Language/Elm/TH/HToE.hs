@@ -526,9 +526,9 @@ expressionToString (ConE name) = nameToElmString name
 
 expressionToString x = error $ "Can't convert " ++ (show x) ++ " to string"
 
--- | Generic elm expression for "otherwise"
-elmOtherwise :: S.Expr
-elmOtherwise = Lo.none $ E.Var $ V.Raw "otherwise"
+-- | Generic elm expression for "else"
+elmElse :: S.Expr
+elmElse = Lo.none $ E.Var $ V.Raw "else"
 
 -- | Translate a guard into an Elm expression
 translateGuard (NormalG exp) = translateExpression exp
@@ -599,8 +599,8 @@ translateExpression (CondE cond th el) = do
     eCond <-  translateExpression cond
     eTh <-  translateExpression th
     eEl <-  translateExpression el
-    let loOtherwise =  elmOtherwise
-    return $ Lo.none $ E.MultiIf [(eCond, eTh), (elmOtherwise, eEl)]
+    let loElse =  elmElse
+    return $ Lo.none $ E.MultiIf [(eCond, eTh), (elmElse, eEl)]
 
 translateExpression (MultiIfE guardExpList) = do
     expPairs <- mapM transPair guardExpList 
@@ -872,7 +872,7 @@ getElmName s
 
 --modules that are supported by Elm
 elmHasFunction :: String -> String -> Bool
-elmHasFunction "Dict" s = s `elem` ["empty", "singleton", "insert", "update", "remove", "member", "lookup", "findWithDefault",
+elmHasFunction "Dict" s = s `elem` ["empty", "singleton", "insert", "update", "remove", "member", "findWithDefault",
                             "union", "intersect", "diff", "keys", "values", "toList", "fromList", "map", "foldl", "foldr"]
 
 elmHasFunction "Json" s = s `elem` ["String", "Number", "Boolean", "Null", "Array", "Object"]  
@@ -885,7 +885,7 @@ directTranslate "Dict" s =
   case Map.lookup s m of
        Just ret -> ret
        Nothing -> error $ "Elm Dictionary operation not supported: " ++ s
-  where m = Map.fromList [("Map", "Dict")] --TODO more
+  where m = Map.fromList [("Map", "Dict"), ("lookup", "get")] --TODO more
     
 getElmModuleName :: [String] -> String -> String    
 --TODO fix infix?    

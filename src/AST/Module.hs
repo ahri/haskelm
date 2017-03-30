@@ -150,7 +150,7 @@ instance (Pretty exs, Pretty body) => Pretty (Module exs body) where
   pretty (Module names _ exs ims body) =
       P.vcat [modul, P.text "", prettyImports, P.text "", pretty body]
     where 
-      modul = P.text "module" <+> name <+> pretty exs <+> P.text "where"
+      modul = P.text "module" <+> name <+> P.text "exposing" <+> pretty exs
       name = P.text (List.intercalate "." names)
 
       prettyImports =

@@ -42,6 +42,7 @@
 -- If you use the JSON functionality, the generated Elm code will depend on the `JsonUtils` library,
 -- which can be obtained from <http://library.elm-lang.org>. 
 
+{-# LANGUAGE FlexibleContexts #-}
 
 module Language.Elm.TH
     ( 

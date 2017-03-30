@@ -122,9 +122,11 @@ instance (Pretty def, Pretty var, Var.ToString var) => Pretty (Expr' ann def var
               map prettyParens (collectApps (Annotation.A undefined expr))
 
       MultiIf branches ->
-          P.text "if" $$ nest 3 (vcat $ map iff branches)
+          P.text "if" $$ nest 3 (vcat $ decorate branches)
         where
-          iff (b,e) = P.text "|" <+> P.hang (pretty b <+> P.text "->") 2 (pretty e)
+          decorate [] = []
+          decorate ((b,e) : []) = [P.hang (pretty b) 2 (pretty e)]
+          decorate ((b,e) : brs) = P.hang (pretty b <+> P.text "then") 2 (pretty e) : decorate brs
 
       Let defs e ->
           P.sep
